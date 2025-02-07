@@ -4,13 +4,13 @@
 WITH FilmActors AS (
     SELECT fa.actor_id
     FROM FILM_ACTOR fa
-    WHERE fa.film_id = "%{user input}%" -- user input for the id (will be passed from the Python API)
+    WHERE fa.film_id = 73 -- user input for the id (will be passed from the Python API)
 ),
 FilmCategories AS (
     SELECT fc.category_id
     FROM FILM_CATEGORY fc
-    WHERE fc.film_id = "%{user input}%" -- user input for the id (will be passed from the Python API)
-),
+    WHERE fc.film_id = 73 -- user input for the id (will be passed from the Python API)
+)
 SELECT DISTINCT f.film_id, f.title
 FROM FILM f
 JOIN FILM_ACTOR fa ON f.film_id = fa.film_id
