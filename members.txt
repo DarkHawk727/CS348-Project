@@ -1,5 +1,5 @@
-y2982che
-rl2gonza
-adpirvut
-asarao
-h43wang
+y2982che - Worked on basic feature 3, Setting up test data, and general write up
+rl2gonza - Worked on generating Database for DuckDB, Project Description and general write up
+adpirvut - Worked on R9, Schema Design and project description
+asarao -  Worked on basic feature 1, GitHub Setup, and ER diagram
+h43wang - Worked on basic feature 2, System Support, and general write up 
