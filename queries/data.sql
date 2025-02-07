@@ -4,3 +4,5 @@ INSERT INTO actor SELECT * FROM read_csv('data/actor.csv');
 INSERT INTO category SELECT * FROM read_csv('data/category.csv');
 INSERT INTO film_actor SELECT * FROM read_csv('data/film_actor.csv');
 INSERT INTO film_category SELECT * FROM read_csv('data/film_category.csv');
+INSERT INTO user SELECT * FROM read_csv('data/users.csv');
+INSERT INTO ratings SELECT * FROM read_csv('data/ratings.csv');
