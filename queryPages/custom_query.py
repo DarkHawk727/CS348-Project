@@ -29,9 +29,16 @@ def show(conn):
     # Custom query input subsection -----
     query = st.text_area("Enter your SQL query", height=150)
     
-    if st.button("Run Query"):
+    # need to find out a more efficient way to check for forbidden words, probably some library that can do it
+    forbidden_words = ["DROP TABLE", "CREATE TABLE", "ALTER TABLE", "INSERT INTO", "UPDATE", "DELETE", "CREATE INDEX", "CREATE VIEW", "CREATE"]
+    
+    if st.button("Run Query"):    
+    
         if query:
             try:
+                if any(word in query.upper() for word in forbidden_words):
+                    raise Exception("You cannot alter the database in this way")
+
                 result = conn.execute(query).fetchdf()
                 st.dataframe(result)
             except Exception as e:
