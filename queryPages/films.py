@@ -1,0 +1,123 @@
+import streamlit as st
+import pandas as pd
+
+# todo move the queries away from here and into the queries folder (should split up the queries folder into different files for each page)
+def show(conn):
+    st.header("Film Explorer")
+    
+    
+    # general filters subsection -----
+    # Filters
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        # Get all categories
+        categories = conn.execute("SELECT category_id, name FROM CATEGORY ORDER BY name").fetchdf()
+        selected_category = st.selectbox("Filter by Category", ["All"] + categories["name"].tolist())
+    
+    with col2:
+        # Get all languages
+        languages = conn.execute("SELECT language_id, name FROM LANGUAGE ORDER BY name").fetchdf()
+        selected_language = st.selectbox("Filter by Language", ["All"] + languages["name"].tolist())
+    
+    with col3: # there is something wrong with the actual movie data with all the movies being from 2005-2006 (need to update the data)
+        # Year range
+        min_year, max_year = conn.execute("SELECT MIN(release_year), MAX(release_year) FROM FILM").fetchone()
+        if min_year is None: min_year = 1900
+        if max_year is None: max_year = 2023
+        
+        # Handle case where min_year equals max_year
+        if min_year == max_year:
+            slider_min = min_year - 1
+            slider_max = max_year + 1
+            default_value = (min_year, max_year)
+        else:
+            slider_min = min_year
+            slider_max = max_year
+            default_value = (min_year, max_year)
+        
+        year_range = st.slider("Release Year", slider_min, slider_max, default_value)
+    
+    # Build query based on filters
+    query = """
+        SELECT f.film_id, f.title, f.release_year, f.length, f.age_rating, l.name as language
+        FROM FILM f
+        LEFT JOIN LANGUAGE l ON f.language_id = l.language_id
+    """
+    
+    where_clauses = []
+    where_clauses.append(f"f.release_year BETWEEN {year_range[0]} AND {year_range[1]}")
+    
+    if selected_category != "All":
+        query += " JOIN FILM_CATEGORY fc ON f.film_id = fc.film_id JOIN CATEGORY c ON fc.category_id = c.category_id"
+        where_clauses.append(f"c.name = '{selected_category}'")
+    
+    if selected_language != "All":
+        where_clauses.append(f"l.name = '{selected_language}'")
+    
+    if where_clauses:
+        query += " WHERE " + " AND ".join(where_clauses)
+    
+    query += " ORDER BY f.title"
+    
+    # Execute query and display results
+    films = conn.execute(query).fetchdf()
+    st.dataframe(films)
+    
+    # Film details subsection -----
+    if not films.empty:
+        st.subheader("Film Details")
+        selected_film_title = st.selectbox("Select a film for details", films["title"].tolist())
+        
+        film_details = conn.execute(f"""
+            SELECT f.*, l.name as language
+            FROM FILM f
+            LEFT JOIN LANGUAGE l ON f.language_id = l.language_id
+            WHERE f.title = '{selected_film_title}'
+        """).fetchdf()
+        
+        if not film_details.empty:
+            film_id = film_details.iloc[0]["film_id"]
+            
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                st.write("**Title:**", film_details.iloc[0]["title"])
+                st.write("**Release Year:**", film_details.iloc[0]["release_year"])
+                st.write("**Language:**", film_details.iloc[0]["language"])
+                st.write("**Length:**", film_details.iloc[0]["length"], "minutes")
+                st.write("**Age Rating:**", film_details.iloc[0]["age_rating"])
+                st.write("**Description:**", film_details.iloc[0]["description"])
+            
+            with col2:
+                # Get actors for this film
+                actors = conn.execute(f"""
+                    SELECT a.first_name, a.last_name
+                    FROM ACTOR a
+                    JOIN FILM_ACTOR fa ON a.actor_id = fa.actor_id
+                    WHERE fa.film_id = {film_id}
+                """).fetchdf()
+                
+                st.write("**Actors:**")
+                if not actors.empty:
+                    for _, actor in actors.iterrows():
+                        st.write(f"- {actor['first_name']} {actor['last_name']}")
+                else:
+                    st.write("No actors listed")
+                
+                # Get categories for this film
+                categories = conn.execute(f"""
+                    SELECT c.name
+                    FROM CATEGORY c
+                    JOIN FILM_CATEGORY fc ON c.category_id = fc.category_id
+                    WHERE fc.film_id = {film_id}
+                """).fetchdf()
+                
+                st.write("**Categories:**")
+                if not categories.empty:
+                    for _, category in categories.iterrows():
+                        st.write(f"- {category['name']}")
+                else:
+                    st.write("No categories listed") 
+    
+    # same with actors, need to add more advanced features like most famous actors in a film, most popular film of a category, some stuff with reviews etc.
