@@ -22,6 +22,7 @@ if __name__ == "__main__":
     test_files = [
         "tests/basic_feature_1.sql",
         "tests/basic_feature_2.sql",
+        "tests/basic_feature_3.sql",
         "tests/basic_feature_4.sql"
     ]
 
