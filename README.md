@@ -28,7 +28,11 @@ pip install -r requirements.txt
 
 To verify that you have correctly installed everything correctly, please run `test.py`. This will create the table schema, fill the data, and then verify that there are 1000 rows
 
+## Possible Advanced Feature
+
+- Given an actor, find actors who acted in the same movies.
+
 ## Sources
 
-- https://github.com/ofenloch/mysql-sakila/blob/master/sakila-data.sql
-- https://dev.mysql.com/doc/sakila/en/sakila-preface.html
+- <https://github.com/ofenloch/mysql-sakila/blob/master/sakila-data.sql>
+- <https://dev.mysql.com/doc/sakila/en/sakila-preface.html>
