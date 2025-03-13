@@ -1,2 +1,105 @@
 import duckdb
 import streamlit as st
+import pandas as pd
+import os
+import importlib
+
+# Import pages (do not change name of folder since if its pages it will be displayed in the sidebar)
+from queryPages import films, actors, custom_query
+
+# Set up page configuration
+st.set_page_config(
+    page_title="Movie Database Explorer",
+    page_icon="🎬",
+    layout="wide",
+    initial_sidebar_state="expanded" # change to "collapsed" if you want to hide the sidebar
+)
+
+# Initialize database connection
+@st.cache_resource
+def init_db():
+    if not os.path.exists('data'):
+        os.makedirs('data')
+    
+    conn = duckdb.connect('data/movies.db')
+    
+    # Check if tables already exist
+    table_count = conn.execute("""
+        SELECT COUNT(*) FROM information_schema.tables 
+        WHERE table_schema = 'main' AND table_name = 'FILM'
+    """).fetchone()[0]
+    
+    # Initialize schema only if tables don't exist
+    if table_count == 0:
+        with open('queries/schema.sql', 'r') as f:
+            schema_sql = f.read()
+            conn.execute(schema_sql)
+    
+    
+    # not sure if this section is needed but better safe than sorry
+    # Check if data exists
+    film_count = conn.execute("SELECT COUNT(*) FROM FILM").fetchone()[0]
+    
+    # Load data from CSV files if tables are empty
+    if film_count == 0:
+        try:
+            with open('queries/data.sql', 'r') as f:
+                data_sql = f.read()
+                conn.execute(data_sql)
+            st.sidebar.success("Data loaded successfully from CSV files!")
+        except Exception as e:
+            st.sidebar.error(f"Error loading data: {e}")
+            st.sidebar.info("Please ensure your CSV files exist in the data/ directory.")
+    
+    return conn
+
+# Get database connection
+conn = init_db()
+
+# Sidebar for navigation
+st.sidebar.title("Movie Database Explorer")
+st.sidebar.markdown("---")
+
+# Navigation
+st.sidebar.subheader("Navigation")
+page = st.sidebar.radio(
+    "Select a page",
+    ["Films", "Actors", "Run Custom Query"],
+    label_visibility="collapsed"
+)
+
+# Database info in sidebar (add more later)
+st.sidebar.markdown("---")
+st.sidebar.subheader("Database Info")
+film_count = conn.execute("SELECT COUNT(*) FROM FILM").fetchone()[0]
+actor_count = conn.execute("SELECT COUNT(*) FROM ACTOR").fetchone()[0]
+
+st.sidebar.markdown(f"**Films:** {film_count}")
+st.sidebar.markdown(f"**Actors:** {actor_count}")
+
+# Main content
+st.title(f"Movie Database - {page}")
+
+# Display the selected page
+if page == "Films":
+    films.show(conn)
+elif page == "Actors":
+    actors.show(conn)
+elif page == "Run Custom Query":
+    custom_query.show(conn)
+
+# Add some CSS to make it look nicer
+st.markdown("""
+<style>
+    .stDataFrame {
+        margin-top: 20px;
+        margin-bottom: 30px;
+    }
+    .stMetric {
+        background-color: #f0f2f6;
+        padding: 10px;
+        border-radius: 5px;
+    }
+</style>
+""", unsafe_allow_html=True)
+
