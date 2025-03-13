@@ -4,6 +4,7 @@ import pandas as pd
 import streamlit as st
 
 
+
 def load_query(filename):
     """Load an SQL query from a file in the 'queries' folder."""
     path = os.path.join("queries", filename)

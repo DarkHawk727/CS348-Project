@@ -1,28 +1,31 @@
 import streamlit as st
 import pandas as pd
+from queries.film_query import *
+from queries.general_query import *
 
 # todo move the queries away from here and into the queries folder (should split up the queries folder into different files for each page)
 def show(conn):
     st.header("Film Explorer")
     
-    
+    # Film Name Input
+    movie_name_string = st.text_input("Film Name Search",value="")
     # general filters subsection -----
     # Filters
     col1, col2, col3 = st.columns(3)
     
     with col1:
         # Get all categories
-        categories = conn.execute("SELECT category_id, name FROM CATEGORY ORDER BY name").fetchdf()
+        categories = get_all_categories(conn)
         selected_category = st.selectbox("Filter by Category", ["All"] + categories["name"].tolist())
     
     with col2:
         # Get all languages
-        languages = conn.execute("SELECT language_id, name FROM LANGUAGE ORDER BY name").fetchdf()
+        languages = get_all_languages(conn)
         selected_language = st.selectbox("Filter by Language", ["All"] + languages["name"].tolist())
     
     with col3: # there is something wrong with the actual movie data with all the movies being from 2005-2006 (need to update the data)
         # Year range
-        min_year, max_year = conn.execute("SELECT MIN(release_year), MAX(release_year) FROM FILM").fetchone()
+        min_year, max_year = get_film_release_range(conn)
         if min_year is None: min_year = 1900
         if max_year is None: max_year = 2023
         
@@ -54,6 +57,9 @@ def show(conn):
     
     if selected_language != "All":
         where_clauses.append(f"l.name = '{selected_language}'")
+
+    if movie_name_string !="":
+        where_clauses.append(f"f.title LIKE '%{movie_name_string.upper()}%'")
     
     if where_clauses:
         query += " WHERE " + " AND ".join(where_clauses)
@@ -61,7 +67,7 @@ def show(conn):
     query += " ORDER BY f.title"
     
     # Execute query and display results
-    films = conn.execute(query).fetchdf()
+    films = apply_film_filters(query, conn)
     st.dataframe(films)
     
     # Film details subsection -----
@@ -69,12 +75,7 @@ def show(conn):
         st.subheader("Film Details")
         selected_film_title = st.selectbox("Select a film for details", films["title"].tolist())
         
-        film_details = conn.execute(f"""
-            SELECT f.*, l.name as language
-            FROM FILM f
-            LEFT JOIN LANGUAGE l ON f.language_id = l.language_id
-            WHERE f.title = '{selected_film_title}'
-        """).fetchdf()
+        film_details = get_film_details(conn, selected_film_title)
         
         if not film_details.empty:
             film_id = film_details.iloc[0]["film_id"]
@@ -91,30 +92,20 @@ def show(conn):
             
             with col2:
                 # Get actors for this film
-                actors = conn.execute(f"""
-                    SELECT a.first_name, a.last_name
-                    FROM ACTOR a
-                    JOIN FILM_ACTOR fa ON a.actor_id = fa.actor_id
-                    WHERE fa.film_id = {film_id}
-                """).fetchdf()
+                actors = get_film_actors(conn, film_id)
                 
                 st.write("**Actors:**")
-                if not actors.empty:
+                if actors:
                     for _, actor in actors.iterrows():
                         st.write(f"- {actor['first_name']} {actor['last_name']}")
                 else:
                     st.write("No actors listed")
                 
                 # Get categories for this film
-                categories = conn.execute(f"""
-                    SELECT c.name
-                    FROM CATEGORY c
-                    JOIN FILM_CATEGORY fc ON c.category_id = fc.category_id
-                    WHERE fc.film_id = {film_id}
-                """).fetchdf()
+                categories = get_film_categories(conn, film_id)
                 
                 st.write("**Categories:**")
-                if not categories.empty:
+                if categories:
                     for _, category in categories.iterrows():
                         st.write(f"- {category['name']}")
                 else:
