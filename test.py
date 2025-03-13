@@ -6,12 +6,12 @@ if __name__ == "__main__":
     sys.stdout.reconfigure(encoding='utf-8')
 
     # Run schema
-    with open("queries/schema.sql", "r", encoding="utf-8") as file:
+    with open("queries/configuration/schema.sql", "r", encoding="utf-8") as file:
         schema_sql = file.read()
     duckdb.sql(schema_sql)
 
     # Run data
-    with open("queries/data.sql", "r", encoding="utf-8") as file:
+    with open("queries/configuration/data.sql", "r", encoding="utf-8") as file:
         data_sql = file.read()
     duckdb.sql(data_sql)
 
@@ -20,10 +20,16 @@ if __name__ == "__main__":
 
     # List of test files to run
     test_files = [
-        "tests/basic_feature_1.sql",
-        "tests/basic_feature_2.sql",
-        "tests/basic_feature_3.sql",
-        "tests/basic_feature_4.sql"
+        # commented out the sample dataset to maintain old data
+        "tests/feature/inputs/test-production-basic_feature_1.sql",
+        "tests/feature/inputs/test-production-basic_feature_2.sql",
+        "tests/feature/inputs/test-production-basic_feature_3.sql",
+        "tests/feature/inputs/test-production-basic_feature_4.sql", 
+        # "tests/feature/inputs/test-sample-basic_feature_1.sql",
+        # "tests/feature/inputs/test-sample-basic_feature_2.sql",
+        # "tests/feature/inputs/test-sample-basic_feature_3.sql",
+        # "tests/feature/inputs/test-sample-basic_feature_4.sql"
+
     ]
 
     for test_file in test_files:
@@ -35,6 +41,6 @@ if __name__ == "__main__":
         # Convert result to a DataFrame, then to a string
         output_str = result.fetchdf().to_string(index=False)
         # Write the output to a corresponding file in the outputs directory
-        output_file = os.path.join("outputs", os.path.basename(test_file).replace(".sql", ".out"))
+        output_file = os.path.join("tests/feature/outputs", os.path.basename(test_file).replace(".sql", ".out"))
         with open(output_file, "w", encoding="utf-8") as out:
             out.write(output_str)
