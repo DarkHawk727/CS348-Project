@@ -1,15 +1,8 @@
-# general query for attributes
-def get_all_languages(conn):
-    return conn.execute("SELECT language_id, name FROM LANGUAGE ORDER BY name").fetchdf()
-
-def get_all_categories(conn):
-    return conn.execute("SELECT category_id, name FROM CATEGORY ORDER BY name").fetchdf()
-
 def get_film_release_range(conn):
     return conn.execute("SELECT MIN(release_year), MAX(release_year) FROM FILM").fetchone()
 
 # Filter Query String
-def apply_filters(query, conn):
+def apply_film_filters(query, conn):
     return conn.execute(query).fetchdf()
 
 # Instance queries

@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
-from .utils import *
+from queries.film_query import *
+from queries.general_query import *
 
 # todo move the queries away from here and into the queries folder (should split up the queries folder into different files for each page)
 def show(conn):
@@ -66,7 +67,7 @@ def show(conn):
     query += " ORDER BY f.title"
     
     # Execute query and display results
-    films = apply_filters(query, conn)
+    films = apply_film_filters(query, conn)
     st.dataframe(films)
     
     # Film details subsection -----
@@ -94,7 +95,7 @@ def show(conn):
                 actors = get_film_actors(conn, film_id)
                 
                 st.write("**Actors:**")
-                if not actors.empty:
+                if actors:
                     for _, actor in actors.iterrows():
                         st.write(f"- {actor['first_name']} {actor['last_name']}")
                 else:
@@ -104,7 +105,7 @@ def show(conn):
                 categories = get_film_categories(conn, film_id)
                 
                 st.write("**Categories:**")
-                if not categories.empty:
+                if categories:
                     for _, category in categories.iterrows():
                         st.write(f"- {category['name']}")
                 else:

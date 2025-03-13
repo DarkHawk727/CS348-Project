@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-
+from queries.actor_query import *
 
 '''
 Will need to import the actual queries from queries folder todo
@@ -16,7 +16,7 @@ def show(conn):
         FROM ACTOR a
         LEFT JOIN FILM_ACTOR fa ON a.actor_id = fa.actor_id
     """
-    
+
     if search_term:
         query += f" WHERE a.first_name ILIKE '%{search_term}%' OR a.last_name ILIKE '%{search_term}%'"
     
@@ -36,18 +36,9 @@ def show(conn):
         first_name, last_name = selected_actor.split(" ", 1)
         
         # Get films for this actor
-        films = conn.execute(f"""
-            SELECT f.title, f.release_year
-            FROM FILM f
-            JOIN FILM_ACTOR fa ON f.film_id = fa.film_id
-            JOIN ACTOR a ON fa.actor_id = a.actor_id
-            WHERE a.first_name = '{first_name}' AND a.last_name = '{last_name}'
-            ORDER BY f.release_year DESC
-        """).fetchdf()
+        films = get_actor_films(conn, first_name, last_name)
         
         st.write(f"**Films with {selected_actor}:**")
         st.dataframe(films) 
     
-    
-
-    # TODO: Add more advanced features here like related actors, shared movies between actors, etc.
+        # TODO: Add more advanced features here like related actors, shared movies between actors, etc.
