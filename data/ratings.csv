@@ -1,2 +1,5 @@
 user_id, film_id, rating, comment
 1, 1, 4, Good movie would watch again!
+2, 1, 1, Would not reccomend
+2, 5, 2, Did not like the ending
+1, 4, 5, Great Movie!
