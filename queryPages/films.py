@@ -6,6 +6,8 @@ def show(conn):
     st.header("Film Explorer")
     
     
+    # Film Name Input
+    movie_name_string = st.text_input("Film Name Search",value="")
     # general filters subsection -----
     # Filters
     col1, col2, col3 = st.columns(3)
@@ -54,6 +56,9 @@ def show(conn):
     
     if selected_language != "All":
         where_clauses.append(f"l.name = '{selected_language}'")
+
+    if movie_name_string !="":
+        where_clauses.append(f"f.title LIKE '%{movie_name_string.upper()}%'")
     
     if where_clauses:
         query += " WHERE " + " AND ".join(where_clauses)
