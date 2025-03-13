@@ -13,6 +13,13 @@ if __name__ == "__main__":
     duckdb.sql(lines)
 
     ### add your tests here
+    with open(f"tests/basic_feature_1.sql", "r", encoding="utf-8") as file:
+        lines = "".join(file.readlines())
+    duckdb.sql(lines).show()
+
+    with open(f"tests/basic_feature_2.sql", "r", encoding="utf-8") as file:
+        lines = "".join(file.readlines())
+    duckdb.sql(lines).show()
 
     with open(f"tests/basic_feature_4.sql", "r", encoding="utf-8") as file:
         lines = "".join(file.readlines())
