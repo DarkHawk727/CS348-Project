@@ -6,17 +6,17 @@ if __name__ == "__main__":
     sys.stdout.reconfigure(encoding='utf-8')
 
     # Run schema
-    with open("queries/configuration/schema.sql", "r", encoding="utf-8") as file:
+    with open("data/schema.sql", "r", encoding="utf-8") as file:
         schema_sql = file.read()
     duckdb.sql(schema_sql)
 
     # Run data
-    with open("queries/configuration/data.sql", "r", encoding="utf-8") as file:
+    with open("data/data.sql", "r", encoding="utf-8") as file:
         data_sql = file.read()
     duckdb.sql(data_sql)
 
     # Ensure the outputs directory exists
-    os.makedirs("outputs", exist_ok=True)
+    os.makedirs("tests/feature/outputs", exist_ok=True)
 
     # List of test files to run
     test_files = [

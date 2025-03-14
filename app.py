@@ -5,7 +5,7 @@ import os
 import importlib
 
 # Import pages (do not change name of folder since if its pages it will be displayed in the sidebar)
-from queryPages import films, actors, recommendations
+from queryPages import films, actors,rated_movies, recommendations
 
 # Set up page configuration
 st.set_page_config(
@@ -31,7 +31,7 @@ def init_db():
     
     # Initialize schema only if tables don't exist
     if table_count == 0:
-        with open('queries/schema.sql', 'r') as f:
+        with open('data/schema.sql', 'r') as f:
             schema_sql = f.read()
             conn.execute(schema_sql)
     
@@ -43,7 +43,7 @@ def init_db():
     # Load data from CSV files if tables are empty (find better way to do this)
     if film_count == 0:
         try:
-            with open('queries/data.sql', 'r') as f:
+            with open('data/data.sql', 'r') as f:
                 data_sql = f.read()
                 conn.execute(data_sql)
             st.sidebar.success("Data loaded successfully from CSV files!")
@@ -64,7 +64,7 @@ st.sidebar.markdown("---")
 st.sidebar.subheader("Navigation")
 page = st.sidebar.radio(
     "Select a page",
-    ["Films", "Actors", "Recommendations"],
+    ["Films", "Actors", "Top Rated", "Recommendations"],
     label_visibility="collapsed" # something here stops default pages from being displayed donot remove
 )
 
@@ -85,6 +85,8 @@ if page == "Films":
     films.show(conn)
 elif page == "Actors":
     actors.show(conn)
+elif page == "Top Rated":
+    rated_movies.show(conn)
 elif page == "Recommendations":
     recommendations.show(conn)
 
