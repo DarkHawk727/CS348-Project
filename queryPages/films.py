@@ -30,7 +30,7 @@ def show(conn):
         if max_year is None: max_year = 2023
         
 
-        year_range = st.slider("Release Year", min_year, max_year, (min_year, max_year))
+        year_range = st.slider("Release Year", min_year-1, max_year+1, (min_year-1, max_year+1))
     
     # Build query based on filters (not happy with this still being in the file)
     query = """
@@ -42,6 +42,7 @@ def show(conn):
     where_clauses = []
     where_clauses.append(f"f.release_year BETWEEN {year_range[0]} AND {year_range[1]}")
     
+    # find way to not have this in the file for milestone 3
     if selected_category != "All":
         query += " JOIN FILM_CATEGORY fc ON f.film_id = fc.film_id JOIN CATEGORY c ON fc.category_id = c.category_id"
         where_clauses.append(f"c.name = '{selected_category}'")
