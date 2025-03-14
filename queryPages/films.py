@@ -29,19 +29,10 @@ def show(conn):
         if min_year is None: min_year = 1900
         if max_year is None: max_year = 2023
         
-        # Handle case where min_year equals max_year
-        if min_year == max_year:
-            slider_min = min_year - 1
-            slider_max = max_year + 1
-            default_value = (min_year, max_year)
-        else:
-            slider_min = min_year
-            slider_max = max_year
-            default_value = (min_year, max_year)
-        
-        year_range = st.slider("Release Year", slider_min, slider_max, default_value)
+
+        year_range = st.slider("Release Year", min_year, max_year, (min_year, max_year))
     
-    # Build query based on filters
+    # Build query based on filters (not happy with this still being in the file)
     query = """
         SELECT f.film_id, f.title, f.release_year, f.length, f.age_rating, l.name as language
         FROM FILM f
@@ -66,7 +57,7 @@ def show(conn):
     
     query += " ORDER BY f.title"
     
-    # Execute query and display results
+    
     films = apply_film_filters(query, conn)
     st.dataframe(films)
     

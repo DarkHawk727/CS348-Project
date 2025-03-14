@@ -15,7 +15,7 @@ st.set_page_config(
     initial_sidebar_state="expanded" # change to "collapsed" if you want to hide the sidebar
 )
 
-# Initialize database connection
+# Initialize database connection (taken from duckdb recommeded practices)
 @st.cache_resource
 def init_db():
     if not os.path.exists('data'):
@@ -23,7 +23,7 @@ def init_db():
     
     conn = duckdb.connect('data/movies.db')
     
-    # Check if tables already exist
+    # Check if tables already exist (bug came up if I ran this a bunch of times)
     table_count = conn.execute("""
         SELECT COUNT(*) FROM information_schema.tables 
         WHERE table_schema = 'main' AND table_name = 'FILM'
@@ -40,7 +40,7 @@ def init_db():
     # Check if data exists
     film_count = conn.execute("SELECT COUNT(*) FROM FILM").fetchone()[0]
     
-    # Load data from CSV files if tables are empty
+    # Load data from CSV files if tables are empty (find better way to do this)
     if film_count == 0:
         try:
             with open('queries/data.sql', 'r') as f:
@@ -65,7 +65,7 @@ st.sidebar.subheader("Navigation")
 page = st.sidebar.radio(
     "Select a page",
     ["Films", "Actors", "Recommendations", "Run Custom Query"],
-    label_visibility="collapsed"
+    label_visibility="collapsed" # something here stops default pages from being displayed donot remove
 )
 
 # Database info in sidebar (add more later)
@@ -90,7 +90,7 @@ elif page == "Recommendations":
 elif page == "Run Custom Query":
     custom_query.show(conn)
 
-# Add some CSS to make it look nicer
+# CSS for the app, feel free to change this was a default option
 st.markdown("""
 <style>
     .stDataFrame {
