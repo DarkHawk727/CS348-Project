@@ -23,7 +23,7 @@ def show(conn):
     
     # Build query based on filters (not happy with this still being in the file)
     query = """
-SELECT f.title, AVG(r.rating) AS average_rating, l.name
+SELECT f.title, AVG(r.rating) AS average_rating, COUNT(r.rating) AS review_count, l.name
 FROM FILM AS f
 JOIN RATINGS AS r ON f.film_id = r.film_id
 JOIN LANGUAGE AS l ON l.language_id = f.language_id
@@ -41,7 +41,7 @@ JOIN LANGUAGE AS l ON l.language_id = f.language_id
     if where_clauses:
         query += " WHERE " + " AND ".join(where_clauses)
     
-    query += "GROUP BY f.film_id, f.title, l.name ORDER BY average_rating;"    
+    query += "GROUP BY f.film_id, f.title, l.name ORDER BY average_rating, review_count DESC;"    
     
     films = apply_film_filters(query, conn)
     
