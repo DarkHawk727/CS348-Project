@@ -25,10 +25,12 @@ if __name__ == "__main__":
         "tests/feature/inputs/test-production-basic_feature_2.sql",
         "tests/feature/inputs/test-production-basic_feature_3.sql",
         "tests/feature/inputs/test-production-basic_feature_4.sql", 
+        "tests/feature/inputs/test-production-basic_feature_5.sql",
         # "tests/feature/inputs/test-sample-basic_feature_1.sql",
         # "tests/feature/inputs/test-sample-basic_feature_2.sql",
         # "tests/feature/inputs/test-sample-basic_feature_3.sql",
         # "tests/feature/inputs/test-sample-basic_feature_4.sql"
+        # "tests/feature/inputs/test-sample-basic_feature_5.sql"
 
     ]
 
