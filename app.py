@@ -5,7 +5,7 @@ import os
 import importlib
 
 # Import pages (do not change name of folder since if its pages it will be displayed in the sidebar)
-from queryPages import films, actors, custom_query
+from queryPages import films, actors, custom_query, recommendations
 
 # Set up page configuration
 st.set_page_config(
@@ -64,7 +64,7 @@ st.sidebar.markdown("---")
 st.sidebar.subheader("Navigation")
 page = st.sidebar.radio(
     "Select a page",
-    ["Films", "Actors", "Run Custom Query"],
+    ["Films", "Actors", "Recommendations", "Run Custom Query"],
     label_visibility="collapsed"
 )
 
@@ -85,6 +85,8 @@ if page == "Films":
     films.show(conn)
 elif page == "Actors":
     actors.show(conn)
+elif page == "Recommendations":
+    recommendations.show(conn)
 elif page == "Run Custom Query":
     custom_query.show(conn)
 
