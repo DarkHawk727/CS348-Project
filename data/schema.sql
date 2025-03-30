@@ -38,8 +38,10 @@ CREATE TABLE FILM (
     age_rating VARCHAR(10),
     FOREIGN KEY (language_id)
     REFERENCES LANGUAGE(language_id),
-
 );
+
+-- Create index for FILM since we filter by title
+CREATE INDEX idx_film_title_upper ON FILM (UPPER(title));
 
 -- Create table for FILM_ACTOR (junction table between ACTOR and FILM)
 CREATE TABLE FILM_ACTOR (
