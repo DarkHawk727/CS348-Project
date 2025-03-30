@@ -11,3 +11,9 @@ To start, you will need Python 3.X installed.
 Run 'streamlit run app.py' to start the app
 
 Will need Pandas, Streamlit, and DuckDB installed in addition to Python 3.X
+
+## TODOs
+
+- [ ] Implement custom sql query (Advanced Feature)
+- [ ] Add indexes, make one a normal one and another a composite (Advanced Feature)
+- [ ] Add views (Advanced Feature)

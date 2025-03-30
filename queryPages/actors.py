@@ -4,7 +4,7 @@ import pandas as pd
 import streamlit as st
 
 
-# should prob move this to a shared file or smth 
+# should prob move this to a shared file or smth
 def load_query(filename):
     """Load an SQL query from a file in the 'queries' folder."""
     path = os.path.join("queries", filename)
@@ -27,8 +27,7 @@ def show(conn):
 
     filter_clause = ""
     if search_term:
-        filter_clause = f"WHERE a.first_name ILIKE '%{search_term}%' OR a.last_name ILIKE '%{search_term}%'"
-
+        filter_clause = f"WHERE UPPER(a.first_name) LIKE UPPER('%{search_term}%') OR UPPER(a.last_name) LIKE UPPER('%{search_term}%')"
 
     actor_query = actor_query_template.format(filter=filter_clause)
 

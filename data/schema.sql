@@ -11,6 +11,10 @@ CREATE TABLE ACTOR (
     last_name VARCHAR(255) NOT NULL
 );
 
+-- Create indexes for ACTOR since we filter by first_name and last_name
+CREATE INDEX idx_actor_first_name_upper ON ACTOR (UPPER(first_name));
+CREATE INDEX idx_actor_last_name_upper ON ACTOR (UPPER(last_name));
+
 -- Create table for CATEGORY
 CREATE TABLE CATEGORY (
     category_id TINYINT PRIMARY KEY,
