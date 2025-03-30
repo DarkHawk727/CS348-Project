@@ -5,7 +5,7 @@ import os
 import importlib
 
 # Import pages (do not change name of folder since if its pages it will be displayed in the sidebar)
-from queryPages import films, actors,rated_movies, recommendations
+from queryPages import films, actors,rated_movies, recommendations, schema_viewer
 
 # Set up page configuration
 st.set_page_config(
@@ -64,7 +64,7 @@ st.sidebar.markdown("---")
 st.sidebar.subheader("Navigation")
 page = st.sidebar.radio(
     "Select a page",
-    ["Films", "Actors", "Top Rated", "Recommendations"],
+    ["Films", "Actors", "Top Rated", "Recommendations", "Schema Viewer"],
     label_visibility="collapsed" # something here stops default pages from being displayed donot remove
 )
 
@@ -89,6 +89,8 @@ elif page == "Top Rated":
     rated_movies.show(conn)
 elif page == "Recommendations":
     recommendations.show(conn)
+elif page == "Schema Viewer":
+    schema_viewer.show(conn)
 
 # CSS for the app, feel free to change this was a default option
 st.markdown("""
