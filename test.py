@@ -8,6 +8,7 @@ if __name__ == "__main__":
     # Run schema
     with open("data/schema.sql", "r", encoding="utf-8") as file:
         schema_sql = file.read()
+        print("populating schema")
     duckdb.sql(schema_sql)
 
     # Run data

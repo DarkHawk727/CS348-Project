@@ -83,3 +83,24 @@ CREATE TABLE RATINGS (
         FOREIGN KEY (film_id)
         REFERENCES FILM(film_id)
 );
+
+-- Create Film Explorer View
+CREATE VIEW FilmExplorerView AS
+SELECT 
+    f.film_id,
+    f.title,
+    f.release_year,
+    f.length,
+    f.age_rating,
+    f.description,
+    l.name AS language,
+    GROUP_CONCAT(DISTINCT c.name ORDER BY c.name) AS categories,
+    GROUP_CONCAT(DISTINCT CONCAT(a.first_name, ' ', a.last_name) ORDER BY a.first_name, a.last_name) AS actors
+FROM FILM f
+LEFT JOIN LANGUAGE l ON f.language_id = l.language_id
+LEFT JOIN FILM_CATEGORY fc ON f.film_id = fc.film_id
+LEFT JOIN CATEGORY c ON fc.category_id = c.category_id
+LEFT JOIN FILM_ACTOR fa ON f.film_id = fa.film_id
+LEFT JOIN ACTOR a ON fa.actor_id = a.actor_id
+GROUP BY f.film_id, f.title, f.release_year, f.length, f.age_rating, f.description, l.name;
+

@@ -32,34 +32,28 @@ def show(conn):
 
         year_range = st.slider("Release Year", min_year-1, max_year+1, (min_year-1, max_year+1))
     
-    # Build query based on filters (not happy with this still being in the file)
     query = """
-        SELECT f.film_id, f.title, f.release_year, f.length, f.age_rating, l.name as language
-        FROM FILM f
-        LEFT JOIN LANGUAGE l ON f.language_id = l.language_id
+        SELECT film_id, title, release_year, length, age_rating, language, categories
+        FROM FilmExplorerView
+        WHERE release_year BETWEEN ? AND ?
     """
-    
-    where_clauses = []
-    where_clauses.append(f"f.release_year BETWEEN {year_range[0]} AND {year_range[1]}")
-    
-    # find way to not have this in the file for milestone 3
-    if selected_category != "All":
-        query += " JOIN FILM_CATEGORY fc ON f.film_id = fc.film_id JOIN CATEGORY c ON fc.category_id = c.category_id"
-        where_clauses.append(f"c.name = '{selected_category}'")
-    
-    if selected_language != "All":
-        where_clauses.append(f"l.name = '{selected_language}'")
+    params = [year_range[0], year_range[1]]
 
-    if movie_name_string !="":
-        where_clauses.append(f"f.title LIKE '%{movie_name_string.upper()}%'")
-    
-    if where_clauses:
-        query += " WHERE " + " AND ".join(where_clauses)
-    
-    query += " ORDER BY f.title"
-    
-    
-    films = apply_film_filters(query, conn)
+    if selected_category != "All":
+        query += " AND categories LIKE ?"
+        params.append(f"%{selected_category}%")
+
+    if selected_language != "All":
+        query += " AND language = ?"
+        params.append(selected_language)
+
+    if movie_name_string:
+        query += " AND UPPER(title) LIKE ?"
+        params.append(f"%{movie_name_string.upper()}%")
+
+    query += " ORDER BY title"
+
+    films = apply_film_filters(query, params,conn)
     st.dataframe(films)
     
     # Film details subsection -----
