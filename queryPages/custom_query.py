@@ -60,18 +60,16 @@ def show(conn):
         font_size=14,
         tab_size=4,
         wrap=True,
-        auto_update=True,
+        auto_update=False,
         readonly=False,
     )
 
     if content:
         if is_query_safe(content):
             st.info("Query is safe to run.")
-            conn.execute(content).fetchdf()
+            result = conn.execute(content).fetchdf()
+            st.dataframe(result)
         else:
             st.error(
                 "The query contains potential modification commands and was blocked for safety."
             )
-
-    if st.button("Run Query"):
-        show(conn)
