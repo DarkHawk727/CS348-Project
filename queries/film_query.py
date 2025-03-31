@@ -2,7 +2,7 @@ def get_film_release_range(conn):
     return conn.execute("SELECT MIN(release_year), MAX(release_year) FROM FILM").fetchone()
 
 # Filter Query String
-def apply_film_filters(query,params, conn):
+def apply_film_filters(query, conn,params=[]):
     return conn.execute(query, params).fetchdf()
 
 # Instance queries

@@ -53,7 +53,7 @@ def show(conn):
 
     query += " ORDER BY title"
 
-    films = apply_film_filters(query, params,conn)
+    films = apply_film_filters(query,conn, params)
     st.dataframe(films)
     
     # Film details subsection -----
