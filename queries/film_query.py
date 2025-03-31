@@ -8,9 +8,8 @@ def apply_film_filters(query,params, conn):
 # Instance queries
 def get_film_details(conn, film_title):
     return conn.execute(f"""
-            SELECT f.*, l.name as language
-            FROM FILM f
-            LEFT JOIN LANGUAGE l ON f.language_id = l.language_id
+            SELECT f.*
+            FROM FilmExplorerView f
             WHERE f.title = '{film_title}'
         """).fetchdf()
 

@@ -14,7 +14,6 @@ from queryPages import (
     recommendations,
     schema_viewer,
 )
-
 # Set up page configuration
 st.set_page_config(
     page_title="Movie Database Explorer",
